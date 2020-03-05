@@ -8,3 +8,20 @@ export function loginUser(data) {
         data: data
     });
 }
+
+export function registrationUser(data) {
+    console.log(data)
+    return axios.request({
+        method: 'post',
+        url: `http://localhost:5000/registration`,
+        data: data
+    });
+}
+
+export function getUser() {
+    return axios.request({
+        method: 'get',
+        url: `http://localhost:5000/user`,
+        headers: {Authorization: 'Bearer ' + localStorage.getItem('access_token')}
+    });
+}

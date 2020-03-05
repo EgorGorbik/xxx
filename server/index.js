@@ -3,7 +3,9 @@ const app = express();
 require('dotenv').config();
 const bodyParser = require('body-parser');
 const userRouter = require('./User/user.router')
-const cors = require('cors')
+const messagesRouter = require('./Messages/messages.router')
+const cors = require('cors');
+const socket = require('socket.io');
 
 
 app.use(bodyParser.json());
@@ -11,9 +13,9 @@ app.use(cors());
 
 let accessTokens = [];
 
-app.get('/post', authenticateToken, (req, res) => {
+/*app.get('/post', authenticateToken, (req, res) => {
     res.json(req.user)
-})
+})*/
 
 /*app.post('/Login', (req, res) => {
     const username = req.body.username;
@@ -29,23 +31,28 @@ app.delete('/logout', (req, res) => {
     res.sendStatus(204)
 })
 
-function authenticateToken(req, res, next) {
-    const authHeader = req.headers['authorization']
-    const token = authHeader && authHeader.split(' ')[1];
-    if(token == null) return res.sendStatus(401);
-    if(!accessTokens.find(e => e === token)) return res.sendStatus(403);
 
-    jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
-        if(err) return res.sendStatus(403)
-        req.user = user;
-        next();
-    })
-}
-
-function generateAccessToken(user) {
-    return jwt.sign(user, process.env.ACCESS_TOKEN_SECRET);
-}
 
 userRouter(app)
+messagesRouter(app)
 
-app.listen(5000)
+const server = app.listen(5000);
+const io = socket(server);
+
+
+const Messages = require('./Messages/messages.service');
+let chats = new Messages();
+
+io.on('connection', socket => {
+    console.log('We have a new connection!')
+
+    socket.on('join', async (id) =>  {
+        console.log(id)
+        let messages = await chats.getChats(id)
+        console.log(messages)
+    })
+
+    socket.on('disconnect', () => {
+        console.log('User had left!')
+    })
+})

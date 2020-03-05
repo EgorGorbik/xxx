@@ -4,8 +4,8 @@ import * as Yup from 'yup';
 import Error from '../Error/index';
 import './index.css';
 import {connect} from "react-redux";
-import {withRouter} from "react-router";
-import Loader from "../Loader";
+import {Redirect, withRouter} from "react-router";
+import Spinner from "../Spinner";
 
 const validationSchema = Yup.object().shape({
     name: Yup.string()
@@ -17,27 +17,35 @@ const validationSchema = Yup.object().shape({
         .required('Данное поле должно быть заполнено')
 })
 
-class Login extends Component {
+class Registration extends Component {
+    componentWillMount() {
+        console.log('will')
+    }
+
     render() {
-        if(this.props.loader) {
-            return <Loader/>
+        if(this.props.user.data) {
+            return <Redirect to='/chat'/>
         }
-        console.log(this.props.loader)
+
+        if(this.props.loader) {
+            return <Spinner/>
+        }
+
         return(
             <Formik
                 initialValues={{ name: '', password: ''}}
                 validationSchema={validationSchema}
                 onSubmit={(values) => {
-                    this.props.loginUser({name: values.name, password: values.password})
+                    this.props.registrationUser({name: values.name, password: values.password})
                 }}
+
             >
                 {({values, errors, touched, handleChange, handleBlur, handleSubmit, isSubmitting}) => (
                     <form onSubmit={handleSubmit} className='form'>
-                        <div className='form_header'>Log In</div>
-                        {this.props.user.error && <div>{this.props.user.error}</div>}
+                        <div className='form_header'>Регистрация</div>
 
                         <div className='input-row'>
-                            <label htmlFor='name'>Name</label>
+                            <label htmlFor='name'>Имя</label>
                             <input
                                 type='text'
                                 name='name'
@@ -48,11 +56,12 @@ class Login extends Component {
                                 value={values.name}
                                 className={touched.name && errors.name ? 'has-error' : null}
                             />
-                            <Error touched={touched.name} message={errors.name}/>
+                            {this.props.user.errorName && <Error touched={true} message={this.props.user.errorName}/>}
+                            <Error touched={touched.name} message={this.props.user.error || errors.name}/>
                         </div>
 
                         <div className='input-row'>
-                            <label htmlFor='password'>Password</label>
+                            <label htmlFor='password'>Пароль</label>
                             <input
                                 type='text'
                                 name='password'
@@ -63,11 +72,12 @@ class Login extends Component {
                                 value={values.password}
                                 className={touched.password && errors.password ? 'has-error' : null}
                             />
+                            {this.props.user.errorPassword && <Error touched={true} message={this.props.user.errorPassword}/>}
                             <Error touched={touched.password} message={errors.password}/>
                         </div>
 
                         <div className='input-row'>
-                            <button className='btn_submit' type='submit' disabled={isSubmitting}>Submit</button>
+                            <button className='btn_submit' type='submit' disabled={isSubmitting}>Зарегистрироваться</button>
                         </div>
                     </form>
                 )}
@@ -82,10 +92,10 @@ const mapStateToProps = (state) => ({
 });
 
 const mapDispatchToProps = (dispatch) =>  ({
-    loginUser: (user) => {dispatch({type: "LOGIN_USER", user: user})}
+    registrationUser: (user) => {dispatch({type: "REGISTRATION_USER", user})}
 });
 
 export default connect(
     mapStateToProps,
     mapDispatchToProps
-)(Login);
+)(Registration);

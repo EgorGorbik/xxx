@@ -11,6 +11,11 @@ class ServiceAdmin {
         return user;
     }
 
+    async getUserNameById(_id) {
+        let user = await this.user.findOne({_id});
+        return user.name;
+    }
+
     async createUser(data) {
         let user = await new this.user(data);
         user.save();
