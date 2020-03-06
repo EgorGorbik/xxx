@@ -12,14 +12,12 @@ class userController {
                 res.status(400).send({ error: "Wrong password" });
             } else {
                 let accessToken = generateAccessToken(user);
-                console.log(accessToken)
                 accessTokens.push(accessToken);
-                res.json({ accessToken, name: user.name, password: user.password });
+                res.json({ accessToken, name: user.name, password: user.password, id: user._id });
             }
         } else {
             res.status(400).send({ error: "Wrong username" });
         }
-        console.log(user)
     }
 
     async registrationUser(req, res) {
@@ -38,7 +36,6 @@ class userController {
         try {
             res.json(req.user.user)
         } catch (e) {
-            console.log(e.message)
             res.send(e.message)
         }
     }

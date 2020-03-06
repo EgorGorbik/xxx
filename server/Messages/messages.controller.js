@@ -9,13 +9,10 @@ class messagesController {
 
     async addChat(req, res) {
         let chat = await this.messages.addChat(req.body);
-        console.log(chat)
 
     }
 
     async getChats(req, res) {
-        console.log('------')
-        console.log(req.user)
         let chats = await this.messages.getChats(req.user.user._id);
         let resultChats = [];
 
@@ -26,13 +23,16 @@ class messagesController {
             let text = chats[i].messages[chats[i].messages.length - 1].text;
             let isMe = req.user.user._id === chats[i].messages[chats[i].messages.length - 1].auth;
             let time = chats[i].messages[chats[i].messages.length - 1].time;
+            let countOnline = chats[i].countOnline;
+            let id = chats[i]._id;
             chat.text = text;
             chat.isMe = isMe;
             chat.time = time;
             chat.interlocutor = interlocutor;
+            chat.countOnline = countOnline;
+            chat.id = id;
             resultChats.push(chat)
         }
-        console.log(resultChats)
         /*for(let i = 0; i < chats.length; i++) {
             let interlocutorId = chats[i].usersId.filter(e => e !== req.user.user._id);
             console.log(interlocutorId)

@@ -19,7 +19,6 @@ const validationSchema = Yup.object().shape({
 
 class Login extends Component {
     componentWillMount() {
-        console.log('log')
     }
 
     render() {

@@ -4,14 +4,25 @@ import Spinner from "../Spinner";
 import './index.css'
 import Chat from "./Chat";
 import Header from "../Header";
+import socket from "../../config/socket";
 
 class User extends Component {
     componentDidMount() {
         this.props.getChats();
+        socket.on('addUser', (id) => {
+            console.log('somebody connected!')
+            console.log(id)
+            this.props.setUserOnline(id)
+        })
+
+        socket.on('dellUser', (id) => {
+            this.props.setUserOfline(id)
+        })
+
     }
 
+
     render() {
-        console.log(this.props.messages)
         if(this.props.loader) {
             return <Spinner />
         }
@@ -38,7 +49,9 @@ const mapStateToProps = (state) => ({
 });
 
 const mapDispatchToProps = (dispatch) =>  ({
-    getChats: () => {dispatch({type: "GET_CHATS"})}
+    getChats: () => {dispatch({type: "GET_CHATS"})},
+    setUserOnline: (id) => {dispatch({type: "SET_USER_ONLINE", id})},
+    setUserOfline: (id) => {dispatch({type: "SET_USER_OFLINE", id})}
 });
 
 export default connect(

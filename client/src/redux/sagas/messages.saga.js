@@ -5,11 +5,9 @@ import {setUserFailed, setUserSuccess} from "../actionCreators/user.action";
 import {setMessagesFailed, setMessagesSuccess} from "../actionCreators/messages.action";
 
 function* getChats() {
-    console.log('we are in saga')
     try {
         yield put(loaderToTrue());
         let { data } = yield call(message.getChats);
-        console.log(data)
         yield put(setMessagesSuccess(data));
         yield put(loaderToFalse());
     } catch (error) {

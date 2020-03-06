@@ -11,8 +11,15 @@ class Initialization extends Component {
         }
 
         this.props.user.data
-        //socket.emit('join', this.props.user.data._id)
 
+    }
+
+    componentDidMount() {
+/*        socket.on('addUser', (id) => {
+            this.props.setUserOnline(id)
+            console.log(id)
+            console.log(this.props.messages)
+        })*/
     }
 
     render() {
@@ -22,11 +29,13 @@ class Initialization extends Component {
 
 const mapStateToProps = (state) => ({
     user: state.user,
-    loader: state.loader
+    loader: state.loader,
+    messages: state.messages
 });
 
 const mapDispatchToProps = (dispatch) =>  ({
-    getUser: () => {dispatch({type: "GET_USER"})}
+    getUser: () => {dispatch({type: "GET_USER"})},
+    setUserOnline: (id) => {dispatch({type: "SET_USER_ONLINE", id})}
 });
 
 export default connect(

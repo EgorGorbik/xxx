@@ -16,6 +16,21 @@ class ServiceMessages {
         let chats = await this.messages.find({usersId: {"$in": [id]}});
         return chats;
     }
+
+    async incrementOnlineUser(_id) {
+        console.log('increment')
+        let chat = await this.messages.find({_id})
+        chat[0].countOnline++;
+        let newChat = await this.messages.findOneAndUpdate({_id}, chat[0], {new: true});
+        return newChat;
+    }
+
+    async decrementOnlineUser(_id) {
+        let chat = await this.messages.find({_id})
+        chat[0].countOnline--;
+        let newChat = await this.messages.findOneAndUpdate({_id}, chat[0], {new: true});
+        return newChat;
+    }
 }
 
 module.exports = ServiceMessages;
